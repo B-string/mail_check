@@ -7,19 +7,53 @@ app.secret_key = 'Security'
 @app.route('/', methods=['POST', 'GET'])
 def main():
     
+    # 세션 존재 여부 확인
+
+    # 세션 존재 시 메인 화면으로 이동
+
+    # 세션 없을 시 로그인 창으로 이동
 
     return render_template('layout.html')
+
+# 관리자 등록
+@app.route('/regist', methods=['POST', 'GET'])
+def user_register():
+
+    if request.method == 'POST':
+        
+        user_id = request.form.get('user_id')
+        user_pwd = request.form.get('user_pwd')
+        name = request.form.get('name')
+        department = request.form.get('department')
+
+        # td = TrainingDatabase()
+
+
+        None        
+
+    return render_template('reg/regist.html')
 
 # 로그인 처리
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
-        print(request.form.get('user_id'))
-        print(request.form.get('user_pwd'))
+        user_id = request.form.get('user_id')
+        user_pwd = request.form.get('user_pwd')
         
+        td = TrainingDatabase()
+        params = {
+            'user_id' : user_id,
+            'user_pwd' : user_pwd
+        }
         
+        user_data = td.read_user_data(params=params)
+        
+        # 데이터베이스 비교
 
-        
+        # 성공 시 메인 화면으로 이동
+
+        # 실패 시 로그인 창으로 이동
+
 
     return render_template('auth/login.html')
 
@@ -117,6 +151,6 @@ def mail_execute():
 
 
 if __name__ == '__main__':
-    # td = TrainingDatabase()
+    td = TrainingDatabase()
     # app.run(host='0.0.0.0', port=8080, debug=True)
     app.run(debug=True)

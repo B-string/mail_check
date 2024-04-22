@@ -22,7 +22,8 @@ class TrainingDatabase :
         self.DB = CONST.DATABASE
 
     def db_connect(self):
-        return pymysql.connect(host=self.HOST, user=self.USER, password=self.PWD, database=self.DB)
+        # return pymysql.connect(host=self.HOST, user=self.USER, password=self.PWD, database=self.DB)
+        return pymysql.connect(host=self.HOST, port=3306, user=self.USER, password=self.PWD, database=self.DB, local_infile=True)
 
     # 로그인 처리
     def read_user_data(self, params: dict):
@@ -32,14 +33,15 @@ class TrainingDatabase :
         message = {}
 
         if params != {}:
-            sql = f'select * from users where %s=%s and %s=%s;'
-            cursor.execute(sql, [
-                'user_id', 
+            sql = 'select * from users where user_id=%s and user_pwd=%s;'
+            # sql = f'select * from users where user_id=\'{params["user_id"]}\' and user_pwd=\'{params["user_pwd"]}\';'
+            cursor.execute(sql, [ 
                 params['user_id'], 
-                'user_pwd', 
                 params['user_pwd']
                 ])
-
+            # cursor.execute(sql)
+            
+            print(cursor.fetchall())
             message = {'Message' : 'Success'}
         else:
             message = {'Message' : 'Error'}
@@ -60,11 +62,9 @@ class TrainingDatabase :
         message = {}
 
         if params !={}:
-            sql = f'select * from target_list where %s=%s and %s=%s;'
+            sql = f'select * from target_list where id=%s and email=%s;'
             cursor.execute(sql, [
-                'id', 
                 params['id'], 
-                'email', 
                 params['email']
                 ])
         
@@ -77,6 +77,7 @@ class TrainingDatabase :
     
 
     # 훈련 기록 입력
+    # TODO: execute 정상 동작 여부 확인 필요
     def insert_training_data(self, params : dict):
         db_conn = self.db_connect()
         cursor = db_conn.cursor(pymysql.cursors.DictCursor)
@@ -101,5 +102,3 @@ class TrainingDatabase :
         db_conn.close()
         
         return message
-
-
